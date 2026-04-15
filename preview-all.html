@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Screen Preview</title>
+  <style>
+    :root {
+      --ink: #1d1d1d;
+      --muted: #5a5a5a;
+      --line: #d7d7d7;
+      --paper: #ffffff;
+      --bg: #f2f2f2;
+      --accent: #2c5aa0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .shell {
+      width: min(1280px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .card,
+    .preview-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    .card {
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h1,
+    .card h2 {
+      margin: 0 0 12px;
+    }
+
+    .card p,
+    .card li {
+      line-height: 1.6;
+    }
+
+    .section-title {
+      margin: 24px 0 12px;
+      font-size: 1.35rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 18px;
+    }
+
+    .preview-card {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .preview-card h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .actions a {
+      display: inline-block;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      text-decoration: none;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .actions a.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    iframe {
+      width: 100%;
+      height: 760px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .small iframe {
+      height: 560px;
+    }
+
+    .medium iframe {
+      height: 680px;
+    }
+
+    @media (max-width: 700px) {
+      .shell {
+        width: min(100% - 20px, 1280px);
+        padding-top: 16px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      iframe,
+      .small iframe,
+      .medium iframe {
+        height: 620px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="card">
+      <h1>Study Screen Preview</h1>
+      <p>This page shows the main experiment webpages using your current local files, including the audio and images you added. Use the “Open full page” link under any frame if you want to inspect that screen on its own.</p>
+      <p>These previews run in browser preview mode only. They are for checking layout, wording, and media display before launch.</p>
+      <ul>
+        <li>Core participant screens are shown below.</li>
+        <li>Lecture previews include audio-only, static-image, and changing-image views.</li>
+        <li>The post-lecture and final pages are also included.</li>
+      </ul>
+    </section>
+
+    <h2 class="section-title">Intro Screens</h2>
+    <section class="grid">
+      <article class="preview-card medium">
+        <h3>Welcome</h3>
+        <p class="meta">Landing page before consent.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=welcome&route=welcome" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=welcome&route=welcome" title="Welcome preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Consent</h3>
+        <p class="meta">Document-style informed consent page.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=consent&route=consent" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=consent&route=consent" title="Consent preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Eligibility</h3>
+        <p class="meta">Eligibility screening questions.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=eligibility&route=eligibility" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=eligibility&route=eligibility" title="Eligibility preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Demographics</h3>
+        <p class="meta">Dropdown-based age, country, language, and education questions.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=demographics&route=demographics" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=demographics&route=demographics" title="Demographics preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Language Background</h3>
+        <p class="meta">English learning and usage questions.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=language&route=language" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=language&route=language" title="Language preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Instructions</h3>
+        <p class="meta">Final participant instructions before the study starts.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=instructions&route=instructions" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=instructions&route=instructions" title="Instructions preview"></iframe>
+      </article>
+    </section>
+
+    <h2 class="section-title">Lecture Screens</h2>
+    <section class="grid">
+      <article class="preview-card small">
+        <h3>Lecture 1 Intro</h3>
+        <p class="meta">Pre-test lecture start screen.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=l1intro&route=lecture-intro&lecture=0" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=l1intro&route=lecture-intro&lecture=0" title="Lecture 1 intro preview"></iframe>
+      </article>
+
+      <article class="preview-card">
+        <h3>Lecture 1 Listen</h3>
+        <p class="meta">Audio-only pre-test listening screen.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=l1listen&route=lecture-listen&lecture=0&condition=C1" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=l1listen&route=lecture-listen&lecture=0&condition=C1" title="Lecture 1 listen preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Lecture 1 Questions</h3>
+        <p class="meta">Comprehension question page after the first lecture.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=l1questions&route=comprehension&lecture=0&condition=C1" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=l1questions&route=comprehension&lecture=0&condition=C1" title="Lecture 1 comprehension preview"></iframe>
+      </article>
+
+      <article class="preview-card">
+        <h3>Lecture 2 Listen: Audio Only</h3>
+        <p class="meta">Condition C1 preview with no image.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=l2c1&route=lecture-listen&lecture=1&condition=C1" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=l2c1&route=lecture-listen&lecture=1&condition=C1" title="Lecture 2 C1 preview"></iframe>
+      </article>
+
+      <article class="preview-card">
+        <h3>Lecture 2 Listen: Static Image</h3>
+        <p class="meta">Condition C2 preview with one centered image.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=l2c2&route=lecture-listen&lecture=1&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=l2c2&route=lecture-listen&lecture=1&condition=C2" title="Lecture 2 C2 preview"></iframe>
+      </article>
+
+      <article class="preview-card">
+        <h3>Lecture 2 Listen: Changing Images</h3>
+        <p class="meta">Condition C3 preview with image changes tied to the audio timeline.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=l2c3&route=lecture-listen&lecture=1&condition=C3" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=l2c3&route=lecture-listen&lecture=1&condition=C3" title="Lecture 2 C3 preview"></iframe>
+      </article>
+
+      <article class="preview-card small">
+        <h3>Break Screen</h3>
+        <p class="meta">Brief pause screen between lecture blocks.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=break&route=break&lecture=0&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=break&route=break&lecture=0&condition=C2" title="Break preview"></iframe>
+      </article>
+    </section>
+
+    <h2 class="section-title">Post-Lecture and Final Screens</h2>
+    <section class="grid">
+      <article class="preview-card medium">
+        <h3>Post-Lecture Questions Page 1</h3>
+        <p class="meta">First post-lecture questionnaire page.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=post1&route=post&lecture=2&postPage=0&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=post1&route=post&lecture=2&postPage=0&condition=C2" title="Post page 1 preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Post-Lecture Questions Page 2</h3>
+        <p class="meta">Second post-lecture questionnaire page.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=post2&route=post&lecture=2&postPage=1&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=post2&route=post&lecture=2&postPage=1&condition=C2" title="Post page 2 preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Post-Lecture Questions Page 3</h3>
+        <p class="meta">Third post-lecture questionnaire page.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=post3&route=post&lecture=2&postPage=2&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=post3&route=post&lecture=2&postPage=2&condition=C2" title="Post page 3 preview"></iframe>
+      </article>
+
+      <article class="preview-card small">
+        <h3>Final Image Questions</h3>
+        <p class="meta">Final visual-experience page shown in image conditions.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=finalimage&route=final-image&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=finalimage&route=final-image&condition=C2" title="Final image preview"></iframe>
+      </article>
+
+      <article class="preview-card small">
+        <h3>Reflection</h3>
+        <p class="meta">Optional reflection page for image conditions.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=reflection&route=reflection&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=reflection&route=reflection&condition=C2" title="Reflection preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Debrief</h3>
+        <p class="meta">Participant debriefing page before final submission.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=debrief&route=debrief&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=debrief&route=debrief&condition=C2" title="Debrief preview"></iframe>
+      </article>
+
+      <article class="preview-card medium">
+        <h3>Completion</h3>
+        <p class="meta">Final completion/export screen.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=complete&route=complete&condition=C2" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=complete&route=complete&condition=C2" title="Completion preview"></iframe>
+      </article>
+
+      <article class="preview-card small">
+        <h3>Exit Screen</h3>
+        <p class="meta">Exit page shown if consent is declined or eligibility is not met.</p>
+        <div class="actions">
+          <a class="primary" href="index.html?preview=1&previewKey=exit&route=exit" target="_blank">Open full page</a>
+        </div>
+        <iframe src="index.html?preview=1&previewKey=exit&route=exit" title="Exit preview"></iframe>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

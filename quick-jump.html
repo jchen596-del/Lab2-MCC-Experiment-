@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Quick Jump</title>
+  <style>
+    :root {
+      --ink: #1d1d1d;
+      --muted: #5a5a5a;
+      --line: #d7d7d7;
+      --paper: #ffffff;
+      --bg: #f2f2f2;
+      --accent: #2c5aa0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .shell {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    h1,
+    h2 {
+      margin: 0 0 12px;
+    }
+
+    p,
+    li,
+    label {
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .group {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .links {
+      display: grid;
+      gap: 8px;
+    }
+
+    a {
+      display: inline-block;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    a.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .muted {
+      color: var(--muted);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="card">
+      <h1>Study Quick Jump</h1>
+      <p>Use this page to open the normal study site or jump directly to any major section for testing. You do not need to click through all previous questions.</p>
+      <div class="links">
+        <a class="primary" href="index.html">Open Normal Webpage</a>
+      </div>
+      <p class="muted">Open this file directly from the folder: <strong>quick-jump.html</strong>.</p>
+    </section>
+
+    <section class="card">
+      <h2>Intro Pages</h2>
+      <div class="grid">
+        <div class="group">
+          <strong>Group 1: Consent and Screening</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-welcome&route=welcome">Welcome</a>
+            <a href="index.html?preview=1&previewKey=jump-consent&route=consent">Consent</a>
+            <a href="index.html?preview=1&previewKey=jump-eligibility&route=eligibility">Eligibility</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 2: Background Questions</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-demographics&route=demographics">Demographics</a>
+            <a href="index.html?preview=1&previewKey=jump-language&route=language">Language</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 3: Start of Study</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-instructions&route=instructions">Instructions</a>
+            <a href="index.html?preview=1&previewKey=jump-exit&route=exit">Exit Screen</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Lecture Blocks</h2>
+      <div class="grid">
+        <div class="group">
+          <strong>Group 4: Lecture 1</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-l1intro&route=lecture-intro&lecture=0">Intro</a>
+            <a href="index.html?preview=1&previewKey=jump-l1listen&route=lecture-listen&lecture=0&condition=C1">Listen</a>
+            <a href="index.html?preview=1&previewKey=jump-l1comp&route=comprehension&lecture=0&condition=C1">Questions</a>
+            <a href="index.html?preview=1&previewKey=jump-break1&route=break&lecture=0&condition=C2">Break After Lecture 1</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 5: Lecture 2</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-l2intro&route=lecture-intro&lecture=1&condition=C2">Intro</a>
+            <a class="primary" href="index.html?preview=1&previewKey=jump-l2c1&route=lecture-listen&lecture=1&condition=C1">Listen C1</a>
+            <a href="index.html?preview=1&previewKey=jump-l2c2&route=lecture-listen&lecture=1&condition=C2">Listen C2</a>
+            <a href="index.html?preview=1&previewKey=jump-l2c3&route=lecture-listen&lecture=1&condition=C3">Listen C3</a>
+            <a href="index.html?preview=1&previewKey=jump-l2comp&route=comprehension&lecture=1&condition=C2">Questions</a>
+            <a href="index.html?preview=1&previewKey=jump-break2&route=break&lecture=1&condition=C2">Break After Lecture 2</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 6: Lecture 3</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-l3intro&route=lecture-intro&lecture=2&condition=C2">Intro</a>
+            <a href="index.html?preview=1&previewKey=jump-l3c1&route=lecture-listen&lecture=2&condition=C1">Listen C1</a>
+            <a href="index.html?preview=1&previewKey=jump-l3c2&route=lecture-listen&lecture=2&condition=C2">Listen C2</a>
+            <a href="index.html?preview=1&previewKey=jump-l3c3&route=lecture-listen&lecture=2&condition=C3">Listen C3</a>
+            <a href="index.html?preview=1&previewKey=jump-l3comp&route=comprehension&lecture=2&condition=C2">Questions</a>
+            <a href="index.html?preview=1&previewKey=jump-post1&route=post&lecture=2&postPage=0&condition=C2">Post Page 1</a>
+            <a href="index.html?preview=1&previewKey=jump-post2&route=post&lecture=2&postPage=1&condition=C2">Post Page 2</a>
+            <a href="index.html?preview=1&previewKey=jump-post3&route=post&lecture=2&postPage=2&condition=C2">Post Page 3</a>
+            <a href="index.html?preview=1&previewKey=jump-break3&route=break&lecture=2&condition=C2">Break After Lecture 3</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 7: Lecture 4</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-l4intro&route=lecture-intro&lecture=3&condition=C2">Intro</a>
+            <a href="index.html?preview=1&previewKey=jump-l4c1&route=lecture-listen&lecture=3&condition=C1">Listen C1</a>
+            <a href="index.html?preview=1&previewKey=jump-l4c2&route=lecture-listen&lecture=3&condition=C2">Listen C2</a>
+            <a href="index.html?preview=1&previewKey=jump-l4c3&route=lecture-listen&lecture=3&condition=C3">Listen C3</a>
+            <a href="index.html?preview=1&previewKey=jump-l4comp&route=comprehension&lecture=3&condition=C2">Questions</a>
+            <a href="index.html?preview=1&previewKey=jump-break4&route=break&lecture=3&condition=C2">Break After Lecture 4</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 8: Lecture 5</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-l5intro&route=lecture-intro&lecture=4&condition=C2">Intro</a>
+            <a href="index.html?preview=1&previewKey=jump-l5c1&route=lecture-listen&lecture=4&condition=C1">Listen C1</a>
+            <a href="index.html?preview=1&previewKey=jump-l5c2&route=lecture-listen&lecture=4&condition=C2">Listen C2</a>
+            <a href="index.html?preview=1&previewKey=jump-l5c3&route=lecture-listen&lecture=4&condition=C3">Listen C3</a>
+            <a href="index.html?preview=1&previewKey=jump-l5comp&route=comprehension&lecture=4&condition=C2">Questions</a>
+            <a href="index.html?preview=1&previewKey=jump-break5&route=break&lecture=4&condition=C2">Break After Lecture 5</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 9: Lecture 6</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-l6intro&route=lecture-intro&lecture=5&condition=C2">Intro</a>
+            <a href="index.html?preview=1&previewKey=jump-l6c1&route=lecture-listen&lecture=5&condition=C1">Listen C1</a>
+            <a href="index.html?preview=1&previewKey=jump-l6c2&route=lecture-listen&lecture=5&condition=C2">Listen C2</a>
+            <a href="index.html?preview=1&previewKey=jump-l6c3&route=lecture-listen&lecture=5&condition=C3">Listen C3</a>
+            <a href="index.html?preview=1&previewKey=jump-l6comp&route=comprehension&lecture=5&condition=C2">Questions</a>
+            <a href="index.html?preview=1&previewKey=jump-l6post1&route=post&lecture=5&postPage=0&condition=C2">Post Page 1</a>
+            <a href="index.html?preview=1&previewKey=jump-l6post2&route=post&lecture=5&postPage=1&condition=C2">Post Page 2</a>
+            <a href="index.html?preview=1&previewKey=jump-l6post3&route=post&lecture=5&postPage=2&condition=C2">Post Page 3</a>
+          </div>
+        </div>
+        <div class="group">
+          <strong>Group 10: Final Block</strong>
+          <div class="links">
+            <a class="primary" href="index.html?preview=1&previewKey=jump-final-image&route=final-image&condition=C2">Final Image Questions</a>
+            <a href="index.html?preview=1&previewKey=jump-reflection&route=reflection&condition=C2">Reflection</a>
+            <a href="index.html?preview=1&previewKey=jump-debrief&route=debrief&condition=C2">Debrief</a>
+            <a href="index.html?preview=1&previewKey=jump-complete&route=complete&condition=C2">Completion</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
