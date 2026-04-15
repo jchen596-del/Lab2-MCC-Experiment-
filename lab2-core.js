@@ -20,9 +20,9 @@
       institution: "Southern University of Science and Technology - Business School",
       pi: "Yue Guo",
       email: "guoy@sustech.edu.cn",
-      irb: "Approval Number",
-      duration: "30-35 minutes",
-      basePayment: "15 RMB",
+      irb: "Approved",
+      duration: "40-45 minutes",
+      basePaymentRmb: 20,
       bonusPerCorrect: 0.5,
       maxBonus: 12,
       preview: Q.get("preview") === "1",
@@ -50,6 +50,7 @@
         band: null,
         participant: {
           demographics: {},
+          screening: {},
           language: {},
           instructions: { audioChecked: false, ready: false },
         },
@@ -137,6 +138,7 @@
       if (APP.state.route === "eligibility") return APP.renderEligibility();
       if (APP.state.route === "exit") return APP.renderExit();
       if (APP.state.route === "demographics") return APP.renderDemographics();
+      if (APP.state.route === "screening") return APP.renderScreening();
       if (APP.state.route === "language") return APP.renderLanguage();
       if (APP.state.route === "instructions") return APP.renderInstructions();
       if (APP.state.route === "lecture-intro") return APP.renderLectureIntro();
@@ -253,7 +255,10 @@
       const n = APP.state.lectureIndex + 1;
       if (APP.state.route === "welcome") return { phase: "Phase 1", screen: "Welcome", sub: APP.config.preview ? "Preview mode is active. Missing audio can be simulated." : "Please review the study information before you begin.", pct: 4 };
       if (["consent", "eligibility", "exit"].includes(APP.state.route)) return { phase: "Phase 1", screen: "Consent and Eligibility", sub: "Read the study information and confirm whether you wish to participate.", pct: APP.state.route === "consent" ? 10 : 16 };
-      if (["demographics", "language"].includes(APP.state.route)) return { phase: "Phase 2", screen: "Background Questions", sub: "Provide the requested background information using the form below.", pct: APP.state.route === "demographics" ? 24 : 31 };
+      if (["demographics", "screening", "language"].includes(APP.state.route)) {
+        const pct = APP.state.route === "demographics" ? 24 : APP.state.route === "screening" ? 29 : 34;
+        return { phase: "Phase 2", screen: "Background Questions", sub: "Provide the requested background information using the form below.", pct };
+      }
       if (APP.state.route === "instructions") return { phase: "Phase 3", screen: "Instructions", sub: "Review the instructions, check your audio, and begin when ready.", pct: 38 };
       if (["lecture-intro", "lecture-listen", "comprehension"].includes(APP.state.route)) return { phase: n === 1 ? "Phase 4" : "Phase 5", screen: `Lecture ${n} of ${APP.data.lectures.length}`, sub: APP.state.route === "comprehension" ? "Answer the questions based on the lecture you just heard." : "Listen carefully. Questions will appear after the audio is complete.", pct: Math.min(40 + APP.state.lectureIndex * 8 + (APP.state.route === "comprehension" ? 6 : 2), 84) };
       if (["post", "break"].includes(APP.state.route)) return { phase: "Phase 5", screen: APP.state.route === "post" ? `Post-Lecture Questions (${APP.state.postPage + 1} of 3)` : "Brief Break", sub: "Continue through the remaining questions at a steady pace.", pct: Math.min(48 + APP.state.lectureIndex * 8 + APP.state.postPage * 2, 88) };
@@ -398,6 +403,7 @@
 
     tabularRow() {
       const demographics = APP.state.participant.demographics || {};
+      const screening = APP.state.participant.screening || {};
       const language = APP.state.participant.language || {};
       const instructions = APP.state.participant.instructions || {};
       const platform = APP.state.platform || {};
@@ -431,9 +437,12 @@
         demographics_country: demographics.country || "",
         demographics_native_language: demographics.nativeLanguage || "",
         demographics_education: demographics.education || "",
-        demographics_attention_check_response: demographics.attentionCheck || "",
-        demographics_attention_check_passed: demographics.attentionCheckPassed ? 1 : 0,
-        demographics_payment_identifier_last4: demographics.paymentIdentifierLast4 || "",
+        eligibility_red_green_color_blindness: APP.state.eligibility.redGreenColorBlindness || "",
+        eligibility_device_type: APP.state.eligibility.deviceType || "",
+        eligibility_prior_related_participation: APP.state.eligibility.priorParticipation || "",
+        demographics_attention_check_response: screening.attentionCheck || "",
+        demographics_attention_check_passed: screening.attentionCheckPassed ? 1 : 0,
+        demographics_payment_identifier_last4: screening.paymentIdentifierLast4 || "",
         language_years_english: language.yearsEnglish || "",
         language_use_frequency: language.useFrequency || "",
         language_self_proficiency: language.selfProficiency || "",
@@ -497,6 +506,7 @@
       row.score_total = score.total;
       row.score_percent = score.percent;
       row.score_bonus = score.bonus;
+      row.score_total_payment = score.totalPayment;
       return row;
     },
 
@@ -511,7 +521,10 @@
           if (r.answers[q.id] === q.a) correct += 1;
         });
       });
-      return { correct, total, percent: total ? Number(((correct / total) * 100).toFixed(1)) : 0, bonus: Number((correct * APP.config.bonusPerCorrect).toFixed(1)) };
+      const rawBonus = correct * APP.config.bonusPerCorrect;
+      const bonus = Number(Math.min(APP.config.maxBonus, rawBonus).toFixed(1));
+      const totalPayment = Number((APP.config.basePaymentRmb + bonus).toFixed(1));
+      return { correct, total, percent: total ? Number(((correct / total) * 100).toFixed(1)) : 0, bonus, totalPayment };
     },
 
     completionUrl() {
@@ -572,6 +585,11 @@
       const m = Math.floor(s / 60);
       const r = s % 60;
       return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
+    },
+
+    money(value) {
+      const amount = Number(value || 0);
+      return `${Number.isInteger(amount) ? amount : amount.toFixed(1)} RMB`;
     },
 
     diffSeconds(start, end) {

@@ -92,7 +92,9 @@ Object.assign(window.LAB2, {
         <div class="summary-grid">
           <div class="summary-panel"><strong>Condition</strong><span>${A.conditionLabel(A.state.condition || "Not assigned")}</span></div>
           <div class="summary-panel"><strong>Correct answers</strong><span>${s.correct} / ${s.total}</span></div>
-          <div class="summary-panel"><strong>Estimated bonus</strong><span>${s.bonus.toFixed(1)} RMB</span></div>
+          <div class="summary-panel"><strong>Base payment</strong><span>${A.money(A.config.basePaymentRmb)}</span></div>
+          <div class="summary-panel"><strong>Performance bonus</strong><span>${A.money(s.bonus)}</span></div>
+          <div class="summary-panel"><strong>Final payment</strong><span>${A.money(s.totalPayment)}</span></div>
         </div>
         <div class="card-stack">
           <div class="notice"><strong>Submission status:</strong> ${A.esc(A.state.submission.message || "No automatic submission attempted.")}</div>

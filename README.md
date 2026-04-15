@@ -63,7 +63,7 @@ If a file is missing, the site shows a placeholder panel. In preview mode, audio
 - The site autosaves progress in browser `localStorage`.
 - On the final screen, the participant can download a JSON or CSV export of the session.
 - The site stores timing information, including total session length and per-lecture question-answering duration.
-- The demographic section includes one instructed-response attention check and a required 4-digit payment identifier field, and the export includes the attention-check response/pass flag plus the payment identifier.
+- The background section now spans two screens and includes an instructed-response attention check, a required 4-digit payment identifier field, and screening items for vision, desktop/laptop use, and prior participation.
 - If you supply `?endpoint=https://your-endpoint`, the site will also POST the final payload there.
 - If you supply `?cc=YOURCODE`, the thank-you screen shows a Prolific completion link.
 - If you supply `?sheet=YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL`, the site will submit directly to a live Google Sheet.

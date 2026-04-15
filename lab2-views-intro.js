@@ -141,7 +141,7 @@ Object.assign(window.LAB2, {
             <p><strong>Institution:</strong> ${A.config.institution}</p>
             <p><strong>Principal Investigator:</strong> ${A.config.pi}</p>
             <p><strong>Email:</strong> ${A.config.email}</p>
-            <p><strong>IRB Approval Number:</strong> ${A.config.irb}</p>
+            <p><strong>IRB Status:</strong> ${A.config.irb}</p>
           </div>
           <div class="document-section">
             <h3>Purpose of the Study</h3>
@@ -153,7 +153,7 @@ Object.assign(window.LAB2, {
           </div>
           <div class="document-section">
             <h3>Time and Compensation</h3>
-            <p>The session takes about ${A.config.duration}. Base payment is ${A.config.basePayment}. Each correct comprehension answer is worth ${A.config.bonusPerCorrect.toFixed(1)} RMB up to ${A.config.maxBonus} RMB.</p>
+            <p>The session takes about ${A.config.duration}. Base payment is ${A.money(A.config.basePaymentRmb)}. Each correct comprehension answer is worth ${A.config.bonusPerCorrect.toFixed(1)} RMB up to ${A.money(A.config.maxBonus)}. The maximum possible total payment is ${A.money(A.config.basePaymentRmb + A.config.maxBonus)}.</p>
           </div>
           <div class="document-section">
             <h3>Voluntary Participation</h3>
@@ -191,6 +191,14 @@ Object.assign(window.LAB2, {
   renderEligibility() {
     const A = window.LAB2;
     const d = A.state.eligibility;
+    const deviceOptions = [
+      ["", "Select one"],
+      ["laptop", "Laptop"],
+      ["desktop", "Desktop computer"],
+      ["tablet", "Tablet (e.g., iPad)"],
+      ["phone", "Phone"],
+      ["other", "Other"],
+    ];
     A.root.innerHTML = `
       <section class="card card-stack">
         <div>
@@ -203,6 +211,9 @@ Object.assign(window.LAB2, {
           ${A.yesNo("age", "Are you 18 years of age or older?", d.age || "")}
           ${A.yesNo("english", "Is English a language you learned as a second or foreign language (not as your first language from birth)?", d.english || "")}
           ${A.yesNo("device", "Do you have access to a device with speakers or headphones and a stable internet connection for the duration of this study?", d.device || "")}
+          ${A.yesNo("redGreenColorBlindness", "Do you have red-green color blindness?", d.redGreenColorBlindness || "")}
+          ${A.selectField("deviceType", "What type of device are you currently using to complete this study?", d.deviceType || "", deviceOptions)}
+          ${A.yesNo("priorParticipation", "Have you participated in this study or a related version of this study before?", d.priorParticipation || "")}
           <div class="buttons">
             <button class="primary-button" type="submit">Next</button>
             <button id="backEligibility" class="secondary-button" type="button">Back</button>
@@ -213,11 +224,29 @@ Object.assign(window.LAB2, {
     document.getElementById("eligibilityForm").addEventListener("submit", (e) => {
       e.preventDefault();
       const fd = new FormData(e.currentTarget);
-      const payload = { age: fd.get("age"), english: fd.get("english"), device: fd.get("device"), recordedAt: new Date().toISOString() };
-      if (!payload.age || !payload.english || !payload.device) return window.alert("Please answer all eligibility questions.");
+      const payload = {
+        age: fd.get("age"),
+        english: fd.get("english"),
+        device: fd.get("device"),
+        redGreenColorBlindness: fd.get("redGreenColorBlindness"),
+        deviceType: A.text(fd.get("deviceType")),
+        priorParticipation: fd.get("priorParticipation"),
+        recordedAt: new Date().toISOString(),
+      };
+      if (!payload.age || !payload.english || !payload.device || !payload.redGreenColorBlindness || !payload.deviceType || !payload.priorParticipation) {
+        return window.alert("Please answer all eligibility questions.");
+      }
       A.state.eligibility = payload;
       A.saveState();
-      if ([payload.age, payload.english, payload.device].includes("no")) return A.go("exit", { exitReason: "failed-eligibility" });
+      const allowedDeviceTypes = ["tablet", "desktop", "laptop"];
+      if (
+        [payload.age, payload.english, payload.device].includes("no") ||
+        payload.redGreenColorBlindness === "yes" ||
+        !allowedDeviceTypes.includes(payload.deviceType) ||
+        payload.priorParticipation === "yes"
+      ) {
+        return A.go("exit", { exitReason: "failed-eligibility" });
+      }
       A.go("demographics");
     });
   },
@@ -225,13 +254,14 @@ Object.assign(window.LAB2, {
   renderExit() {
     const A = window.LAB2;
     const declined = A.state.exitReason === "declined-consent";
-    const failedAttentionCheck = A.state.exitReason === "failed-attention-check";
-    A.root.innerHTML = `
+      const failedAttentionCheck = A.state.exitReason === "failed-attention-check";
+      const failedScreening = A.state.exitReason === "failed-screening";
+      A.root.innerHTML = `
       <section class="card card-stack">
         <div>
           <p class="section-eyebrow">Exit</p>
           <h2>You Do Not Qualify for This Study</h2>
-          <p class="lede">${declined ? "You chose not to participate in this study." : failedAttentionCheck ? "Based on your responses, you do not qualify to continue this study." : "Based on your responses, you do not meet the eligibility criteria for this study."} You may now close this page${A.config.exitUrl ? " or use the redirect button below." : "."}</p>
+          <p class="lede">${declined ? "You chose not to participate in this study." : (failedAttentionCheck || failedScreening) ? "Based on your responses, you do not qualify to continue this study." : "Based on your responses, you do not meet the eligibility criteria for this study."} You may now close this page${A.config.exitUrl ? " or use the redirect button below." : "."}</p>
         </div>
         <div class="buttons">
           ${A.config.exitUrl ? `<a class="primary-button" href="${A.esc(A.config.exitUrl)}">Leave Study</a>` : ""}
@@ -250,18 +280,13 @@ Object.assign(window.LAB2, {
     const d = A.state.participant.demographics || {};
     A.root.innerHTML = `
       <section class="card card-stack">
-        <div><p class="section-eyebrow">Demographic Information</p><h2>Background Questionnaire</h2><p class="lede">Please provide the following background information. All responses are confidential.</p></div>
+        <div><p class="section-eyebrow">Demographic Information (1 of 2)</p><h2>Background Questionnaire</h2><p class="lede">Please provide the following background information. All responses are confidential.</p></div>
         <form id="demographicsForm" class="card-stack">
           ${A.selectField("age", "What is your age?", d.age || "", AGE_OPTIONS)}
           ${A.selectField("gender", "What is your gender?", d.gender || "", [["", "Select one"], ["male", "Male"], ["female", "Female"], ["nonbinary", "Non-binary / gender diverse"], ["prefer_not_to_say", "Prefer not to say"]])}
           ${A.selectField("country", "What is your country or region of birth?", d.country || "", COUNTRY_OPTIONS)}
           ${A.selectField("nativeLanguage", "What is your native language?", d.nativeLanguage || "", LANGUAGE_OPTIONS)}
           ${A.selectField("education", "What is your highest completed level of education?", d.education || "", [["", "Select one"], ["high_school", "Secondary school / high school"], ["some_college", "Some college / university (not completed)"], ["bachelor", "Bachelor's degree"], ["master", "Master's degree"], ["doctoral", "Doctoral or professional degree"]])}
-          ${A.selectField("attentionCheck", "Attention check: To confirm you are reading instructions carefully, please select \"Red\" for this question.", d.attentionCheck || "", [["", "Select one"], ["blue", "Blue"], ["green", "Green"], ["red", "Red"], ["yellow", "Yellow"]])}
-          <div class="field-group">
-            <label for="paymentIdentifierLast4">Please enter the last 4 digits of your phone number. This will be used as your final identifier for payment and bonus processing.</label>
-            <input id="paymentIdentifierLast4" name="paymentIdentifierLast4" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" value="${A.esc(d.paymentIdentifierLast4 || "")}" placeholder="Last 4 digits" />
-          </div>
           <div class="buttons">
             <button class="primary-button" type="submit">Next</button>
             <button id="backDemographics" class="secondary-button" type="button">Back</button>
@@ -278,15 +303,48 @@ Object.assign(window.LAB2, {
         country: A.text(fd.get("country")),
         nativeLanguage: A.text(fd.get("nativeLanguage")),
         education: A.text(fd.get("education")),
+      };
+      if (!payload.age || !payload.gender || !payload.country || !payload.nativeLanguage || !payload.education) return window.alert("Please complete all required demographic questions.");
+      A.state.participant.demographics = payload;
+      A.saveState();
+      A.go("screening");
+    });
+  },
+
+  renderScreening() {
+    const A = window.LAB2;
+    const d = A.state.participant.screening || {};
+    A.root.innerHTML = `
+      <section class="card card-stack">
+        <div><p class="section-eyebrow">Demographic Information (2 of 2)</p><h2>Verification and Payment Identifier</h2><p class="lede">Please complete the final verification items before continuing.</p></div>
+        <form id="screeningForm" class="card-stack">
+          ${A.selectField("attentionCheck", "To confirm you are reading instructions carefully, please select \"Red\" for this question.", d.attentionCheck || "", [["", "Select one"], ["blue", "Blue"], ["green", "Green"], ["red", "Red"], ["yellow", "Yellow"]])}
+          <div class="field-group">
+            <label for="paymentIdentifierLast4">Please enter the last 4 digits of your phone number. This will be used as your final identifier for payment and bonus processing.</label>
+            <input id="paymentIdentifierLast4" name="paymentIdentifierLast4" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" value="${A.esc(d.paymentIdentifierLast4 || "")}" placeholder="Last 4 digits" />
+          </div>
+          <div class="buttons">
+            <button class="primary-button" type="submit">Next</button>
+            <button id="backScreening" class="secondary-button" type="button">Back</button>
+          </div>
+        </form>
+      </section>`;
+    document.getElementById("backScreening").addEventListener("click", () => A.go("demographics"));
+    document.getElementById("screeningForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.currentTarget);
+      const payload = {
         attentionCheck: A.text(fd.get("attentionCheck")),
         attentionCheckPassed: A.text(fd.get("attentionCheck")) === "red",
         paymentIdentifierLast4: A.text(fd.get("paymentIdentifierLast4")),
       };
-      if (!payload.age || !payload.gender || !payload.country || !payload.nativeLanguage || !payload.education || !payload.attentionCheck || !payload.paymentIdentifierLast4) return window.alert("Please complete all required demographic questions.");
+      if (!payload.attentionCheck || !payload.paymentIdentifierLast4) return window.alert("Please complete all required screening questions.");
       if (!/^\d{4}$/.test(payload.paymentIdentifierLast4)) return window.alert("Please enter exactly the last 4 digits of your phone number.");
-      A.state.participant.demographics = payload;
+      A.state.participant.screening = payload;
       A.saveState();
-      if (!payload.attentionCheckPassed) return A.go("exit", { exitReason: "failed-attention-check" });
+      if (!payload.attentionCheckPassed) {
+        return A.go("exit", { exitReason: !payload.attentionCheckPassed ? "failed-attention-check" : "failed-screening" });
+      }
       A.go("language");
     });
   },
@@ -384,7 +442,7 @@ Object.assign(window.LAB2, {
     testTypeRadios.forEach((radio) => radio.addEventListener("change", syncTestDetails));
     syncTestDetails();
 
-    document.getElementById("backLanguage").addEventListener("click", () => A.go("demographics"));
+    document.getElementById("backLanguage").addEventListener("click", () => A.go("screening"));
     languageForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const fd = new FormData(e.currentTarget);
