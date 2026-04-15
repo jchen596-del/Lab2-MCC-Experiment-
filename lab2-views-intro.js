@@ -225,12 +225,13 @@ Object.assign(window.LAB2, {
   renderExit() {
     const A = window.LAB2;
     const declined = A.state.exitReason === "declined-consent";
+    const failedAttentionCheck = A.state.exitReason === "failed-attention-check";
     A.root.innerHTML = `
       <section class="card card-stack">
         <div>
           <p class="section-eyebrow">Exit</p>
           <h2>You Do Not Qualify for This Study</h2>
-          <p class="lede">${declined ? "You chose not to participate in this study." : "Based on your responses, you do not meet the eligibility criteria for this study."} You may now close this page${A.config.exitUrl ? " or use the redirect button below." : "."}</p>
+          <p class="lede">${declined ? "You chose not to participate in this study." : failedAttentionCheck ? "Based on your responses, you do not qualify to continue this study." : "Based on your responses, you do not meet the eligibility criteria for this study."} You may now close this page${A.config.exitUrl ? " or use the redirect button below." : "."}</p>
         </div>
         <div class="buttons">
           ${A.config.exitUrl ? `<a class="primary-button" href="${A.esc(A.config.exitUrl)}">Leave Study</a>` : ""}
@@ -256,7 +257,11 @@ Object.assign(window.LAB2, {
           ${A.selectField("country", "What is your country or region of birth?", d.country || "", COUNTRY_OPTIONS)}
           ${A.selectField("nativeLanguage", "What is your native language?", d.nativeLanguage || "", LANGUAGE_OPTIONS)}
           ${A.selectField("education", "What is your highest completed level of education?", d.education || "", [["", "Select one"], ["high_school", "Secondary school / high school"], ["some_college", "Some college / university (not completed)"], ["bachelor", "Bachelor's degree"], ["master", "Master's degree"], ["doctoral", "Doctoral or professional degree"]])}
-          ${A.inputText("participantNote", "Participant note (optional platform ID or comment)", d.participantNote || "")}
+          ${A.selectField("attentionCheck", "Attention check: To confirm you are reading instructions carefully, please select \"Red\" for this question.", d.attentionCheck || "", [["", "Select one"], ["blue", "Blue"], ["green", "Green"], ["red", "Red"], ["yellow", "Yellow"]])}
+          <div class="field-group">
+            <label for="paymentIdentifierLast4">Please enter the last 4 digits of your phone number. This will be used as your final identifier for payment and bonus processing.</label>
+            <input id="paymentIdentifierLast4" name="paymentIdentifierLast4" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" value="${A.esc(d.paymentIdentifierLast4 || "")}" placeholder="Last 4 digits" />
+          </div>
           <div class="buttons">
             <button class="primary-button" type="submit">Next</button>
             <button id="backDemographics" class="secondary-button" type="button">Back</button>
@@ -273,11 +278,15 @@ Object.assign(window.LAB2, {
         country: A.text(fd.get("country")),
         nativeLanguage: A.text(fd.get("nativeLanguage")),
         education: A.text(fd.get("education")),
-        participantNote: A.text(fd.get("participantNote")),
+        attentionCheck: A.text(fd.get("attentionCheck")),
+        attentionCheckPassed: A.text(fd.get("attentionCheck")) === "red",
+        paymentIdentifierLast4: A.text(fd.get("paymentIdentifierLast4")),
       };
-      if (!payload.age || !payload.gender || !payload.country || !payload.nativeLanguage || !payload.education) return window.alert("Please complete all required demographic questions.");
+      if (!payload.age || !payload.gender || !payload.country || !payload.nativeLanguage || !payload.education || !payload.attentionCheck || !payload.paymentIdentifierLast4) return window.alert("Please complete all required demographic questions.");
+      if (!/^\d{4}$/.test(payload.paymentIdentifierLast4)) return window.alert("Please enter exactly the last 4 digits of your phone number.");
       A.state.participant.demographics = payload;
       A.saveState();
+      if (!payload.attentionCheckPassed) return A.go("exit", { exitReason: "failed-attention-check" });
       A.go("language");
     });
   },
