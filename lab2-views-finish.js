@@ -85,6 +85,8 @@ Object.assign(window.LAB2, {
   renderComplete() {
     const A = window.LAB2;
     const s = A.score();
+    const url = A.completionUrl();
+    const canRetrySubmit = A.state.submission.status === "failed";
     A.root.innerHTML = `
       <section class="card card-stack">
         <div><p class="section-eyebrow">Thank You</p><h2>Your Responses Have Been Recorded</h2><p class="lede">Thank you for your participation in this study. A summary of your performance and payment is provided below.</p></div>

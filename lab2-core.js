@@ -7,6 +7,7 @@
   const PREVIEW_LECTURE = Q.has("lecture") ? Number(Q.get("lecture")) : NaN;
   const PREVIEW_POST_PAGE = Q.has("postPage") ? Number(Q.get("postPage")) : NaN;
   const PREVIEW_KEY = Q.get("previewKey") || "";
+  const DEFAULT_POST_URL = "/api/results";
 
   Object.assign(APP, {
     data: DATA,
@@ -31,7 +32,7 @@
       completionBase: "https://app.prolific.co/submissions/complete?cc=",
       exitUrl: Q.get("exit") || "",
       sheetUrl: Q.get("sheet") || "",
-      postUrl: Q.get("endpoint") || "",
+      postUrl: Q.get("endpoint") || DEFAULT_POST_URL,
     },
 
     freshState() {
@@ -303,8 +304,15 @@
 
       if (APP.config.postUrl) {
         try {
-          const res = await fetch(APP.config.postUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(APP.payload()) });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const res = await fetch(APP.config.postUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(APP.backendPayload()) });
+          if (!res.ok) {
+            let detail = `HTTP ${res.status}`;
+            try {
+              const body = await res.json();
+              if (body && body.error) detail = `${detail}: ${body.error}`;
+            } catch {}
+            throw new Error(detail);
+          }
           messages.push("Responses were sent to the configured endpoint.");
           success = true;
         } catch (err) {
@@ -398,6 +406,95 @@
         participant: APP.state.participant,
         responses: APP.state.responses,
         score: APP.score(),
+      };
+    },
+
+    jsonCopy(value, fallback) {
+      if (value === undefined || value === null) return fallback;
+      return JSON.parse(JSON.stringify(value));
+    },
+
+    backendQuestionnaireAnswers() {
+      const participant = APP.state.participant || {};
+      const final = APP.state.responses.final || {};
+      return {
+        start_forms: {
+          consent: APP.jsonCopy(APP.state.consent, {}),
+          eligibility: APP.jsonCopy(APP.state.eligibility, {}),
+          demographics: APP.jsonCopy(participant.demographics, {}),
+          screening: APP.jsonCopy(participant.screening, {}),
+          language: APP.jsonCopy(participant.language, {}),
+          instructions: APP.jsonCopy(participant.instructions, {}),
+        },
+        post_surveys: APP.jsonCopy(APP.state.responses.post, {}),
+        final_forms: {
+          image_check: APP.jsonCopy(final.imageCheck, {}),
+          reflection: final.reflection || "",
+        },
+      };
+    },
+
+    backendQuestionAnswerDetail() {
+      const lectures = {};
+      APP.data.lectures.forEach((lecture) => {
+        const record = APP.state.responses.lectures[lecture.id] || {};
+        const answers = record.answers || {};
+        const questions = {};
+        lecture.qs.forEach((question) => {
+          const selected = Number.isInteger(answers[question.id]) ? answers[question.id] : null;
+          questions[question.id] = {
+            prompt: question.p,
+            options: APP.jsonCopy(question.o, []),
+            selected_index: selected,
+            correct_index: question.a,
+            is_correct: selected === null ? null : selected === question.a,
+          };
+        });
+        lectures[lecture.id] = { questions };
+      });
+      return { lectures };
+    },
+
+    backendTiming() {
+      const lectures = {};
+      const firstLecture = APP.data.lectures[0] || {};
+      const lastLecture = APP.data.lectures[APP.data.lectures.length - 1] || {};
+      const firstRecord = APP.state.responses.lectures[firstLecture.id] || {};
+      const lastRecord = APP.state.responses.lectures[lastLecture.id] || {};
+      const startedAt = firstRecord.audioStartedAt || "";
+      const endedAt = lastRecord.questionSubmittedAt || lastRecord.submittedAt || "";
+
+      APP.data.lectures.forEach((lecture) => {
+        const record = APP.state.responses.lectures[lecture.id] || {};
+        const questionSubmittedAt = record.questionSubmittedAt || record.submittedAt || "";
+        const audioSec = APP.diffSeconds(record.audioStartedAt, record.questionStartedAt);
+        const questionSec = Number.isInteger(record.questionDurationSec)
+          ? record.questionDurationSec
+          : APP.diffSeconds(record.questionStartedAt, questionSubmittedAt);
+        lectures[lecture.id] = {
+          audio_sec: audioSec,
+          question_sec: questionSec,
+        };
+      });
+
+      return {
+        session: {
+          started_at: startedAt,
+          ended_at: endedAt,
+          total_session_sec: APP.diffSeconds(startedAt, endedAt),
+        },
+        lectures,
+      };
+    },
+
+    backendPayload() {
+      const screening = APP.state.participant.screening || {};
+      return {
+        phone_suffix4: screening.paymentIdentifierLast4 || "",
+        assigned_group: APP.state.condition || "",
+        questionnaire_answers: APP.backendQuestionnaireAnswers(),
+        question_answer_detail: APP.backendQuestionAnswerDetail(),
+        timing: APP.backendTiming(),
       };
     },
 

@@ -59,6 +59,37 @@ def _validate_session_timing(session_timing):
     return None
 
 
+def _is_empty_timing_value(value):
+    return value is None or value == ""
+
+
+def _is_non_negative_integer(value):
+    return type(value) is int and value >= 0
+
+
+def _validate_lecture_timings(timing):
+    lectures = timing.get("lectures")
+    if lectures is None:
+        return None
+    if not _is_json_object(lectures):
+        return "timing.lectures must be an object"
+
+    for lecture_id, lecture_timing in lectures.items():
+        if not _is_non_empty_string(lecture_id):
+            return "timing.lectures keys must be non-empty strings"
+        if not _is_json_object(lecture_timing):
+            return f"timing.lectures.{lecture_id} must be an object"
+
+        for field in ("audio_sec", "question_sec"):
+            value = lecture_timing.get(field)
+            if _is_empty_timing_value(value):
+                continue
+            if not _is_non_negative_integer(value):
+                return f"timing.lectures.{lecture_id}.{field} must be a non-negative integer or empty"
+
+    return None
+
+
 def validate_payload(payload):
     # Validate the boundary before touching SQLite. This catches malformed data
     # early and keeps the database format predictable for later analysis.
@@ -95,6 +126,10 @@ def validate_payload(payload):
     if timing_error:
         return timing_error
 
+    lecture_timing_error = _validate_lecture_timings(payload["timing"])
+    if lecture_timing_error:
+        return lecture_timing_error
+
     return None
 
 
@@ -107,12 +142,22 @@ def create_app(test_config=None):
 
     init_db(app.config["DATABASE_PATH"])
 
+    @app.after_request
+    def add_cors_headers(response):
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response
+
     @app.get("/health")
     def health():
         return jsonify({"ok": True})
 
-    @app.post("/api/results")
+    @app.route("/api/results", methods=["POST", "OPTIONS"])
     def create_result():
+        if request.method == "OPTIONS":
+            return "", 204
+
         # silent=True turns invalid JSON into None, letting validate_payload
         # return a clean 400 response instead of Flask raising an HTML error.
         payload = request.get_json(silent=True)
