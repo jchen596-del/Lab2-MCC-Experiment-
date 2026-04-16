@@ -106,7 +106,7 @@ window.LAB2_DATA = {
       ]
     },
     imageCheck: {
-      title: "Manipulation Check",
+      title: "",
       desc: "Indicate your response using the scale below. (1 = Not at all, 7 = Extremely well)",
       low: "Not at all",
       high: "Extremely well",

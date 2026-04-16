@@ -288,7 +288,8 @@ Object.assign(window.LAB2, {
   scaleBlock(id, answers) {
     const A = window.LAB2;
     const b = A.data.scales[id];
-    return `<fieldset class="scale-block"><legend>${A.esc(b.title)}</legend><p class="scale-description">${A.esc(b.desc)}</p>${b.items.map((item, i) => `<div class="likert-card"><label class="question-meta" for="${id}_${i + 1}_1">${i + 1}. ${A.esc(item)}</label><div class="likert-options">${Array.from({ length: 7 }, (_, k) => {
+    const legend = b.title ? `<legend>${A.esc(b.title)}</legend>` : "";
+    return `<fieldset class="scale-block">${legend}<p class="scale-description">${A.esc(b.desc)}</p>${b.items.map((item, i) => `<div class="likert-card"><label class="question-meta" for="${id}_${i + 1}_1">${i + 1}. ${A.esc(item)}</label><div class="likert-options">${Array.from({ length: 7 }, (_, k) => {
       const v = k + 1;
       return `<label class="likert-choice" for="${id}_${i + 1}_${v}"><span>${v}</span><input id="${id}_${i + 1}_${v}" name="${id}_${i + 1}" type="radio" value="${v}"${A.checked(String(answers[`item${i + 1}`] || ""), String(v))} /></label>`;
     }).join("")}</div><div class="likert-endpoints"><span>${A.esc(b.low)}</span><span>${A.esc(b.high)}</span></div></div>`).join("")}</fieldset>`;

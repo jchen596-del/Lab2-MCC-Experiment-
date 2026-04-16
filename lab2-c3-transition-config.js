@@ -13,18 +13,18 @@ window.LAB2_C3_TRANSITIONS = {
   lecture2: {
     chunk1To2: {
       sentence: "Here's a typical polar bear sculpture.",
-      time: "1:30",
+      time: "1:13",
     },
     chunk2To3: {
       sentence: "If only the people represented on these artifacts could answer our questions.",
-      time: "3:00",
+      time: "2:19",
     },
   },
 
   lecture3: {
     chunk1To2: {
       sentence: "Other people at that time were coming up with similar ideas, but Barker was the one who had the foresight to get a patent for it, which meant he had the right to the invention.",
-      time: "1:40",
+      time: "1:19",
     },
     chunk2To3: {
       sentence: "Sometimes they placed plants and trees in the space between the viewer and the painting.",
@@ -35,33 +35,33 @@ window.LAB2_C3_TRANSITIONS = {
   lecture4: {
     chunk1To2: {
       sentence: "That's because El Greco used some painting tricks to make you think you were seeing a greater dynamic range.",
-      time: "1:30",
+      time: "1:15",
     },
     chunk2To3: {
       sentence: "But first, to answer your question.",
-      time: "2:50",
+      time: "2:17",
     },
   },
 
   lecture5: {
     chunk1To2: {
       sentence: "Pretty intuitive, right?",
-      time: "1:30",
+      time: "0:55",
     },
     chunk2To3: {
       sentence: "and the results supported Demasio's hypothesis.",
-      time: "3:00",
+      time: "2:20",
     },
   },
 
   lecture6: {
     chunk1To2: {
       sentence: "And studies of meteorite found in Antarctica seem to suggest that possibility.",
-      time: "1:40",
+      time: "1:18",
     },
     chunk2To3: {
       sentence: "There's no air, no food.",
-      time: "3:10",
+      time: "2:57",
     },
   },
 };

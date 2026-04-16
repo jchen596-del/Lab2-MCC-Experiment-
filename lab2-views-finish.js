@@ -85,39 +85,16 @@ Object.assign(window.LAB2, {
   renderComplete() {
     const A = window.LAB2;
     const s = A.score();
-    const url = A.completionUrl();
     A.root.innerHTML = `
       <section class="card card-stack">
-        <div><p class="section-eyebrow">Thank You</p><h2>Your Responses Have Been Recorded</h2><p class="lede">Thank you for your participation. Use the options below to export the session data and, when configured, confirm completion on Prolific.</p></div>
+        <div><p class="section-eyebrow">Thank You</p><h2>Your Responses Have Been Recorded</h2><p class="lede">Thank you for your participation in this study. A summary of your performance and payment is provided below.</p></div>
         <div class="summary-grid">
-          <div class="summary-panel"><strong>Condition</strong><span>${A.conditionLabel(A.state.condition || "Not assigned")}</span></div>
-          <div class="summary-panel"><strong>Correct answers</strong><span>${s.correct} / ${s.total}</span></div>
           <div class="summary-panel"><strong>Base payment</strong><span>${A.money(A.config.basePaymentRmb)}</span></div>
+          <div class="summary-panel"><strong>Number of correct answers</strong><span>${s.correct} / ${s.total}</span></div>
           <div class="summary-panel"><strong>Performance bonus</strong><span>${A.money(s.bonus)}</span></div>
-          <div class="summary-panel"><strong>Final payment</strong><span>${A.money(s.totalPayment)}</span></div>
+          <div class="summary-panel"><strong>Total payment</strong><span>${A.money(s.totalPayment)}</span></div>
         </div>
-        <div class="card-stack">
-          <div class="notice"><strong>Submission status:</strong> ${A.esc(A.state.submission.message || "No automatic submission attempted.")}</div>
-          ${url ? `<div class="success-card notice"><strong>Completion link ready:</strong> Participants can now return to Prolific using the configured completion code.</div>` : `<div class="warning-card"><strong>Completion code missing:</strong> Update the completion code in <code>lab2-core.js</code> or via <code>?cc=...</code> before live deployment.</div>`}
-        </div>
-        <div class="buttons">
-          <button id="downloadJson" class="primary-button" type="button">Download JSON</button>
-          <button id="downloadCsv" class="secondary-button" type="button">Download CSV</button>
-          ${url ? `<a class="secondary-button" href="${A.esc(url)}">Return to Prolific</a>` : ""}
-          <button id="restartStudy" class="ghost-button" type="button">Start New Session</button>
-        </div>
+        <div class="summary-panel"><strong>Payment notice</strong><p class="fine-print">We will process and send your payment soon. Thank you again for your time and participation.</p></div>
       </section>`;
-    document.getElementById("downloadJson").addEventListener("click", () => A.downloadBlob(JSON.stringify(A.payload(), null, 2), `lab2-response-${A.state.sessionId}.json`, "application/json"));
-    document.getElementById("downloadCsv").addEventListener("click", () => {
-      const row = A.tabularRow();
-      const headers = Object.keys(row);
-      const values = headers.map((k) => A.csv(row[k]));
-      A.downloadBlob(`${headers.join(",")}\n${values.join(",")}\n`, `lab2-response-${A.state.sessionId}.csv`, "text/csv");
-    });
-    document.getElementById("restartStudy").addEventListener("click", () => {
-      A.clearState();
-      A.state = A.freshState();
-      A.render();
-    });
   },
 });

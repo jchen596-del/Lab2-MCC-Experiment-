@@ -254,25 +254,29 @@ Object.assign(window.LAB2, {
   renderExit() {
     const A = window.LAB2;
     const declined = A.state.exitReason === "declined-consent";
-      const failedAttentionCheck = A.state.exitReason === "failed-attention-check";
-      const failedScreening = A.state.exitReason === "failed-screening";
-      A.root.innerHTML = `
+    const failedAttentionCheck = A.state.exitReason === "failed-attention-check";
+    const failedScreening = A.state.exitReason === "failed-screening";
+    const failedEligibility = A.state.exitReason === "failed-eligibility";
+    const allowRestart = declined;
+    A.root.innerHTML = `
       <section class="card card-stack">
         <div>
           <p class="section-eyebrow">Exit</p>
-          <h2>You Do Not Qualify for This Study</h2>
-          <p class="lede">${declined ? "You chose not to participate in this study." : (failedAttentionCheck || failedScreening) ? "Based on your responses, you do not qualify to continue this study." : "Based on your responses, you do not meet the eligibility criteria for this study."} You may now close this page${A.config.exitUrl ? " or use the redirect button below." : "."}</p>
+          <h2>${declined ? "You Chose Not to Participate" : "You Do Not Qualify for This Study"}</h2>
+          <p class="lede">${declined ? "You chose not to participate in this study." : (failedAttentionCheck || failedScreening) ? "Based on your responses, you do not qualify to continue this study." : failedEligibility ? "Based on your responses, you do not meet the eligibility criteria for this study." : "You may not continue with this study."} You may now close this page${A.config.exitUrl ? " or use the redirect button below." : "."}</p>
         </div>
         <div class="buttons">
           ${A.config.exitUrl ? `<a class="primary-button" href="${A.esc(A.config.exitUrl)}">Leave Study</a>` : ""}
-          <button id="restartExit" class="secondary-button" type="button">Start Over</button>
+          ${allowRestart ? `<button id="restartExit" class="secondary-button" type="button">Start Over</button>` : ""}
         </div>
       </section>`;
-    document.getElementById("restartExit").addEventListener("click", () => {
-      A.clearState();
-      A.state = A.freshState();
-      A.render();
-    });
+    if (allowRestart) {
+      document.getElementById("restartExit").addEventListener("click", () => {
+        A.clearState();
+        A.state = A.freshState();
+        A.render();
+      });
+    }
   },
 
   renderDemographics() {
