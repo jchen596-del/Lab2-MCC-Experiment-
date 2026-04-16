@@ -153,7 +153,7 @@ Object.assign(window.LAB2, {
           </div>
           <div class="document-section">
             <h3>Time and Compensation</h3>
-            <p>The session takes about ${A.config.duration}. Base payment is ${A.money(A.config.basePaymentRmb)}. Each correct comprehension answer is worth ${A.config.bonusPerCorrect.toFixed(1)} RMB up to ${A.money(A.config.maxBonus)}. The maximum possible total payment is ${A.money(A.config.basePaymentRmb + A.config.maxBonus)}.</p>
+            <p>The session takes about ${A.config.duration}. Participants who complete the task carefully and accurately may receive a substantial additional bonus.</p>
           </div>
           <div class="document-section">
             <h3>Voluntary Participation</h3>
