@@ -10,6 +10,8 @@ __pycache__/
 .mypy_cache/
 .DS_Store
 tests/
+!backend/tests/
+!backend/tests/*.py
 
 backend/.env
 backend/data/*.sqlite3
