@@ -84,17 +84,9 @@ Object.assign(window.LAB2, {
 
   renderComplete() {
     const A = window.LAB2;
-    const s = A.score();
     A.root.innerHTML = `
       <section class="card card-stack">
-        <div><p class="section-eyebrow">Thank You</p><h2>Your Responses Have Been Recorded</h2><p class="lede">Thank you for your participation in this study. A summary of your performance and payment is provided below.</p></div>
-        <div class="summary-grid">
-          <div class="summary-panel"><strong>Base payment</strong><span>${A.money(A.config.basePaymentRmb)}</span></div>
-          <div class="summary-panel"><strong>Number of correct answers</strong><span>${s.correct} / ${s.total}</span></div>
-          <div class="summary-panel"><strong>Performance bonus</strong><span>${A.money(s.bonus)}</span></div>
-          <div class="summary-panel"><strong>Total payment</strong><span>${A.money(s.totalPayment)}</span></div>
-        </div>
-        <div class="summary-panel"><strong>Payment notice</strong><p class="fine-print">We will process and send your payment soon. Thank you again for your time and participation.</p></div>
+        <div><p class="section-eyebrow">Thank You</p><h2>Your Responses Have Been Recorded</h2><p class="lede">Thank you for your participation in this study. Your responses have been successfully recorded.</p></div>
       </section>`;
   },
 });
